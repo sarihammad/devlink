@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: devlink-db
+    environment:
+      POSTGRES_DB: devlink
+      POSTGRES_USER: devlink_user
+      POSTGRES_PASSWORD: devlink_pass
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: .
+    container_name: devlink-backend
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/devlink
+      SPRING_DATASOURCE_USERNAME: devlink_user
+      SPRING_DATASOURCE_PASSWORD: devlink_pass
+    ports:
+      - "8080:8080"
+    restart: on-failure
+
+volumes:
+  pgdata:
