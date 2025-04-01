@@ -31,6 +31,14 @@ public class User {
 
     private String github;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+
     @ElementCollection
     private List<String> skills = new ArrayList<>();
 
