@@ -8,10 +8,14 @@ import com.devlink.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -132,25 +136,6 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldUpdateUserProfile() {
-        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(currentUser));
-
-        UserProfileUpdateRequest request = new UserProfileUpdateRequest();
-        request.setBio("Updated bio");
-        request.setGithub("https://github.com/new");
-        request.setSkills(List.of("Java, Spring"));
-        request.setAvatarUrl("/uploads/new.png");
-
-        userService.updateUserProfile(request);
-
-        assertEquals("Updated bio", currentUser.getBio());
-        assertEquals("https://github.com/new", currentUser.getGithub());
-        assertEquals("Java, Spring", currentUser.getSkills());
-        assertEquals("/uploads/new.png", currentUser.getAvatarUrl());
-        verify(userRepository).save(currentUser);
-    }
-
-    @Test
     void shouldReturnCurrentUserProfile() {
         User user = new User();
         user.setUsername("sarihammad");
@@ -171,5 +156,49 @@ class UserServiceTest {
         assertEquals("https://github.com/sarihammad", response.getGithub());
         assertEquals("Spring Boot, Docker", response.getSkills());
         assertEquals("/uploads/avatar.png", response.getAvatarUrl());
+    }
+
+    @Test
+    void shouldUpdateUserProfile() {
+        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(currentUser));
+
+        UserProfileUpdateRequest request = new UserProfileUpdateRequest();
+        request.setBio("Updated bio");
+        request.setGithub("https://github.com/new");
+        request.setSkills(List.of("Java, Spring"));
+        request.setAvatarUrl("/uploads/new.png");
+
+        userService.updateUserProfile(request);
+
+        assertEquals("Updated bio", currentUser.getBio());
+        assertEquals("https://github.com/new", currentUser.getGithub());
+        assertEquals("Java, Spring", currentUser.getSkills());
+        assertEquals("/uploads/new.png", currentUser.getAvatarUrl());
+        verify(userRepository).save(currentUser);
+    }
+
+    @Test
+    void shouldUploadAvatarAndUpdateUser() throws Exception {
+        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(currentUser));
+
+        byte[] fileContent = "fake image content".getBytes();
+        MockMultipartFile mockFile = new MockMultipartFile(
+            "file", "avatar.png", "image/png", fileContent
+        );
+
+        String avatarUrl = userService.uploadAvatar(mockFile);
+
+        assertNotNull(avatarUrl);
+        assertTrue(avatarUrl.startsWith("/uploads/"));
+        assertTrue(avatarUrl.endsWith(".png"));
+
+        verify(userRepository).save(currentUser);
+
+        // Check that file exists
+        Path savedFile = Paths.get("." + avatarUrl);
+        assertTrue(Files.exists(savedFile));
+
+        // Cleanup test file
+        Files.deleteIfExists(savedFile);
     }
 }
