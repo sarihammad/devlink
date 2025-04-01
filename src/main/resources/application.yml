@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/devlink
-    username: your_db_user
-    password: your_db_pass
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
@@ -19,3 +19,18 @@ server:
   port: 8080
 
 SECRET_KEY: qxtBI2/QdcsHleoRrwe454Pm7Oh0G1+l+kptjEnoHqfkzs7fPswkDbwshCjSTAuP4+tGyIcTmuPtpb9hHKkyaw==
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus
+  endpoint:
+    health:
+      show-details: always
+
+info:
+  app:
+    name: DevLink
+    version: 1.0.0
+    author: You

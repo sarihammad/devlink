@@ -124,6 +124,9 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<additionalProperties>
+						<info.build.name>DevLink</info.build.name>
+					</additionalProperties>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
