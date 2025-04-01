@@ -1,9 +1,16 @@
 package com.devlink.service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.devlink.dto.FollowResponse;
 import com.devlink.dto.UserProfileResponse;
@@ -100,5 +107,28 @@ public class UserService {
                 .avatarUrl(f.getAvatarUrl())
                 .build())
             .toList();
+    }
+    public String uploadAvatar(MultipartFile file) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Create unique filename
+        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+        String filename = UUID.randomUUID() + "." + extension;
+
+        // Save file to /uploads
+        Path uploadPath = Paths.get("uploads/" + filename);
+        try {
+            Files.write(uploadPath, file.getBytes());
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save avatar");
+        }
+
+        // Save avatar URL
+        user.setAvatarUrl("/uploads/" + filename);
+        userRepository.save(user);
+
+        return user.getAvatarUrl();
     }
 }
