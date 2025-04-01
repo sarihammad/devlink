@@ -81,4 +81,39 @@ public class PostService {
             .createdAt(post.getCreatedAt())
             .build();
     }
+
+    public void likePost(Long postId) {
+        Post post = getPostEntity(postId);
+        User user = getCurrentUser();
+    
+        post.getLikedBy().add(user);
+        postRepository.save(post);
+    }
+    
+    public void unlikePost(Long postId) {
+        Post post = getPostEntity(postId);
+        User user = getCurrentUser();
+    
+        post.getLikedBy().remove(user);
+        postRepository.save(post);
+    }
+    
+    public List<String> getPostLikers(Long postId) {
+        return postRepository.findById(postId)
+            .orElseThrow(() -> new RuntimeException("Post not found"))
+            .getLikedBy().stream()
+            .map(User::getUsername)
+            .toList();
+    }
+    
+    private Post getPostEntity(Long id) {
+        return postRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Post not found"));
+    }
+    
+    private User getCurrentUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+    }
 }

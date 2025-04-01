@@ -51,4 +51,21 @@ public class PostController {
         postService.deletePost(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{id}/like")
+    public ResponseEntity<Void> like(@PathVariable Long id) {
+        postService.likePost(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}/like")
+    public ResponseEntity<Void> unlike(@PathVariable Long id) {
+        postService.unlikePost(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{id}/likes")
+    public ResponseEntity<List<String>> getLikers(@PathVariable Long id) {
+        return ResponseEntity.ok(postService.getPostLikers(id));
+    }
 }
