@@ -15,6 +15,7 @@ import com.devlink.dto.CommentRequest;
 import com.devlink.dto.CommentResponse;
 import com.devlink.service.CommentService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -25,7 +26,7 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping
-    public ResponseEntity<Void> comment(@PathVariable Long postId, @RequestBody CommentRequest request) {
+    public ResponseEntity<Void> comment(@PathVariable Long postId, @RequestBody @Valid CommentRequest request) {
         commentService.addComment(postId, request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

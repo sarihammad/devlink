@@ -21,6 +21,7 @@ import com.devlink.dto.UserProfileResponse;
 import com.devlink.dto.UserProfileUpdateRequest;
 import com.devlink.service.UserService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -36,7 +37,7 @@ public class UserController {
     }
 
     @PutMapping("/me")
-    public ResponseEntity<Void> updateMyProfile(@RequestBody UserProfileUpdateRequest request) {
+    public ResponseEntity<Void> updateMyProfile(@RequestBody @Valid UserProfileUpdateRequest request) {
         userService.updateUserProfile(request);
         return ResponseEntity.noContent().build();
     }

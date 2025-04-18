@@ -12,6 +12,7 @@ import com.devlink.dto.LoginRequest;
 import com.devlink.dto.RegisterRequest;
 import com.devlink.service.AuthService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -22,13 +23,13 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String, String>> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<Map<String, String>> register(@RequestBody @Valid RegisterRequest request) {
         String token = authService.register(request);
         return ResponseEntity.ok(Map.of("token", token));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody @Valid LoginRequest request) {
         String token = authService.login(request);
         return ResponseEntity.ok(Map.of("token", token));
     }

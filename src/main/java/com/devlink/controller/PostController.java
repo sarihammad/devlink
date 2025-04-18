@@ -16,6 +16,7 @@ import com.devlink.dto.PostRequest;
 import com.devlink.dto.PostResponse;
 import com.devlink.service.PostService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -26,7 +27,7 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping
-    public ResponseEntity<PostResponse> create(@RequestBody PostRequest request) {
+    public ResponseEntity<PostResponse> create(@RequestBody @Valid PostRequest request) {
         return ResponseEntity.ok(postService.createPost(request));
     }
 
@@ -41,7 +42,7 @@ public class PostController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody PostRequest request) {
+    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody @Valid PostRequest request) {
         postService.updatePost(id, request);
         return ResponseEntity.noContent().build();
     }
