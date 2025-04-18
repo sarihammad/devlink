@@ -2,10 +2,6 @@
 
 DevLink is a professional social networking platform tailored for software developers. DevLink focuses on project-based profiles, technical discussion, and meaningful developer connections. Connect, share projects, and grow your dev network.
 
-## Status
-
-This project is currently in early development. Core features like authentication, post creation, and profile management are in progress. Additional features such as messaging, advanced search, and project-based collaboration will be added soon.
-
 ## Features
 
 - Developer profile pages with bio, skills, and project showcase
